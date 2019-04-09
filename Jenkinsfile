@@ -24,7 +24,7 @@ node {
           }
 
           notify('Success')
-      }///end of stage block
+      }//end of stage block
 
       } catch (err) {
           notify("Error ${err}")
