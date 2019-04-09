@@ -5,7 +5,7 @@ node {
      git 'https://github.com/Amarlanda/jenkins.git'
    }
    try {
-          stage 'checkout'
+          stage ('checkout'){
           git 'https://github.com/g0t4/jenkins2-course-spring-boot.git'
 
 
@@ -13,7 +13,7 @@ node {
           dir(project_path) {
 
               stage 'compiling, test, packaging'
-              // on windows use: bat 'mvn clean package'
+
               sh 'mvn clean package'
 
               stage 'archival'
@@ -24,6 +24,7 @@ node {
           }
 
           notify('Success')
+      }//end of stage block
 
       } catch (err) {
           notify("Error ${err}")
