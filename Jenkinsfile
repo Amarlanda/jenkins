@@ -1,12 +1,35 @@
-node {
-  stage('Preparation') {
-    poll scm// for display purposes
-    sh 'ls'
-    git 'https://github.com/Amarlanda/jenkins.git'
-    sh 'echo hello'
-    sh 'echo hello'
+properties([pipelineTriggers([githubPush()])])
+pipeline {
+  /* specify nodes for executing */
+  agent {
+    label 'github-ci'
   }
-  stage ('checkout'){
-    sh 'mvn test'
+
+  stages {
+    /* checkout repo */
+    stage('Checkout SCM') {
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: 'master']],
+          userRemoteConfigs: [[
+            url: 'git@github.com:wshihadeh/rabbitmq_client.git',
+            credentialsId: '',
+            ]]
+          ])
+        }
+      }
+
+    stage('Preparation') {
+      
+      sh 'ls'
+      git 'https://github.com/Amarlanda/jenkins.git'
+      sh 'echo hello'
+      sh 'echo hello'
+    }
+
+    stage ('checkout'){
+      sh 'mvn test'
+    }
   }
 }
