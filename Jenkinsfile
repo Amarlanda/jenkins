@@ -1,39 +1,30 @@
-properties([pipelineTriggers([githubPush()])])
-pipeline {
-  /* specify nodes for executing */
-  agent {
-    label 'github-ci'
-  }
+podTemplate(containers: [
+    containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
+  ]) {
 
-  stages {
-    /* checkout repo */
-    stage('Checkout SCM') {
-      steps {
-        checkout([
-          $class: 'GitSCM',
-          branches: [[name: 'master']],
-          userRemoteConfigs: [[
-            url: 'git@github.com:wshihadeh/rabbitmq_client.git',
-            credentialsId: '',
-            ]]
-          ])
+    node(POD_LABEL) {
+        stage('Get a Maven project') {
+            git 'https://github.com/jenkinsci/kubernetes-plugin.git'
+            container('maven') {
+                stage('Build a Maven project') {
+                    sh 'mvn -B clean install'
+                }
+            }
         }
-      }
 
-    stage('Preparation') {
-      steps {
-        sh 'ls'
-        git 'https://github.com/Amarlanda/jenkins.git'
-        sh 'echo hello'
-        sh 'echo hello'
+        stage('Get a Golang project') {
+            git url: 'https://github.com/hashicorp/terraform.git'
+            container('golang') {
+                stage('Build a Go project') {
+                    sh """
+                    mkdir -p /go/src/github.com/hashicorp
+                    ln -s `pwd` /go/src/github.com/hashicorp/terraform
+                    cd /go/src/github.com/hashicorp/terraform && make core-dev
+                    """
+                }
+            }
         }
-    }
 
-    stage ('checkout'){
-      steps {
-        sh 'mvn test'
-      }
-      
     }
-  }
 }
