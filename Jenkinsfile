@@ -4,6 +4,7 @@ node {
     sh 'ls'
     git 'https://github.com/Amarlanda/jenkins.git'
     sh 'echo hello'
+    sh 'echo hello'
   }
   stage ('checkout'){
     sh 'mvn test'
