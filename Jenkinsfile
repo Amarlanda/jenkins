@@ -21,15 +21,19 @@ pipeline {
       }
 
     stage('Preparation') {
-      
-      sh 'ls'
-      git 'https://github.com/Amarlanda/jenkins.git'
-      sh 'echo hello'
-      sh 'echo hello'
+      steps {
+        sh 'ls'
+        git 'https://github.com/Amarlanda/jenkins.git'
+        sh 'echo hello'
+        sh 'echo hello'
+        }
     }
 
     stage ('checkout'){
-      sh 'mvn test'
+      steps {
+        sh 'mvn test'
+      }
+      
     }
   }
 }
